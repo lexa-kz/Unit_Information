@@ -1,0 +1,1 @@
+CREATE TABLE ktr (ua text not null primary key, name text, odrt text, region text, city text, program text, obltv text);

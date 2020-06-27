@@ -1,0 +1,1 @@
+CREATE TABLE ucs if not exist (ua text not null primary key, name text, tiers text, misc1 text, misc2 text, misc3 text, misc4 text, misc5 text, misc6 text);

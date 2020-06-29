@@ -84,30 +84,44 @@ def parse_script(filename):
             name = re.search(r'NAME = "(\S*)\s*";.*', string)
             if name:
                 ird_info.update({'NAME': name.group(1)})
+            else:
+                ird_info.update({'NAME': ''})
 
             misc1 = re.search(r'MISC1 = "(\w*\s?\w*)\s+";.*', string)
             if misc1:
                 ird_info.update({'MISC1': misc1.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC1': ''})
 
             misc2 = re.search(r'MISC2 = "(\w*\s?\w*)\s+";.*', string)
             if misc2:
                 ird_info.update({'MISC2': misc2.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC2': ''})
 
             misc3 = re.search(r'MISC3 = "(\w*\s?\w*)\s+";.*', string)
             if misc3:
                 ird_info.update({'MISC3': misc3.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC3': ''})
 
             misc4 = re.search(r'MISC4 = "(\w*\s?\w*)\s+";.*', string)
             if misc4:
                 ird_info.update({'MISC4': misc4.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC4': ''})
 
             misc5 = re.search(r'MISC5 = "(\w*\s*,\s\w*)\s+";.*', string)
             if misc5:
                 ird_info.update({'MISC5': misc5.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC5': ''})
 
             misc6 = re.search(r'MISC6 = "(\w*\s?\w*)\s+";.*', string)
             if misc6:
                 ird_info.update({'MISC6': misc6.group(1).rstrip()})
+            else:
+                ird_info.update({'MISC6': ''})
 
             ird_dict[ua] = ird_info
 
@@ -120,4 +134,4 @@ def parse_script(filename):
 
 
 if __name__ == "__main__":
-    pprint(parse_script('files/TIER_1.SCR;1'), sort_dicts=False)
+    pprint(parse_script('../UCS_DB.SCR;1'), sort_dicts=False)

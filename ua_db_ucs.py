@@ -15,6 +15,8 @@ def sql_queries(db_table, somedata):
     функция берёт данные и записывает из в базу данных
     """
 
+    print(somedata.split(','))
+
     query = "REPLACE into ucs (ua, tiers, name, misc1, misc2, misc3, misc4, misc5, misc6) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(
         somedata.split(',')[0], somedata.split(',')[1], somedata.split(',')[2], somedata.split(',')[3],
         somedata.split(',')[4], somedata.split(',')[5], somedata.split(',')[6], somedata.split(',')[7],
@@ -27,7 +29,7 @@ def sql_queries(db_table, somedata):
     return 'data was inserted into DB:\n{}'.format(query)
 
 
-data = parser_script.parse_script('files/TIER_1.SCR;1')
+data = parser_script.parse_script('../UCS_DB.SCR;1')
 
 pprint(data, sort_dicts=False)
 

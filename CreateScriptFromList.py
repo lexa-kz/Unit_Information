@@ -47,14 +47,18 @@ def telnet_ucs_audit(host, ird_names_list):
     else:
         print('\n не задан хост, исправьте\n')
 
+    print('логинимся по telnet\n')
+
     print('=>{} 2. Username:'.format(host))
-    telnet.read_until(b'Username:')
+    t2 = telnet.read_until(b'Username:').decode()
+    print(t2)
 
     print('=>{} 3. ucsmanager'.format(host))
     telnet.write(b'ucsmanager\r\n')
 
     print('=>{} 4. Password:'.format(host))
-    telnet.read_until(b'Password:')
+    t4 = telnet.read_until(b'Password:').decode()
+    print(t4)
 
     print('=>{} 5. gotalife'.format(host))
     telnet.write(b'gotalife\r\n')
@@ -63,11 +67,12 @@ def telnet_ucs_audit(host, ird_names_list):
     time.sleep(3)
 
     print('=>{} 7. (UCSMANAGER)$'.format(host))
-    telnet.read_until(b'(UCSMANAGER)$')
+    t7 = telnet.read_until(b'(UCSMANAGER)$').decode()
+    print(t7)
 
     for name_of_ird in ird_names_list:
         
-        print('делаем запрос ucs_audit приемнику ', name_of_ird)
+        print('\nделаем запрос ucs_audit приемнику ', name_of_ird, '\n')
 
         # -- ucs_audit
         print('=>{} 8. ucs_audit'.format(host))
@@ -77,25 +82,25 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Please enter operator group to audit [0-15/ALL]:
         print('=>{} 10. Please enter operator group to audit [0-15/ALL]:'.format(host))
-        t10 = telnet.read_until(b':')
+        t10 = telnet.read_until(b':').decode()
         print(t10)
-        print('=>{} 11. ALL'.format(host))
-        telnet.write(b'ALL\r\n')
+        print('=>{} 11. 0'.format(host))
+        telnet.write(b'0\r\n')
         print('=>{} 12. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Do you want to create a report file [YES/NO]?:
         print('=>{} 13. Do you want to create a report file [YES/NO]?:'.format(host))
-        t13 = telnet.read_until(b'?')
+        t13 = telnet.read_until(b'?').decode()
         print(t13)
-        print('=>{} 14. NO')
-        telnet.write(b'NO\r\n')
+        print('=>{} 14. NO'.format(host))
+        telnet.write(b'\r\n')
         print('=>{} 15. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Do you want to create a script file [YES/NO]?:
         print('=>{} 16. Do you want to create a script file [YES/NO]?:'.format(host))
-        t16 = telnet.read_until(b'?')
+        t16 = telnet.read_until(b'?').decode()
         print(t16)
         print('=>{} 17. YES'.format(host))
         telnet.write(b'YES\r\n')
@@ -104,7 +109,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # --  Enter the script file specification (UCS$SCRIPT:UCSAUDITALL.SCR):
         print('=>{} 19.  Enter the script file specification (UCS$SCRIPT:UCSAUDITALL.SCR):'.format(host))
-        t19 = telnet.read_until(b'?')
+        t19 = telnet.read_very_eager().decode()
         print(t19)
         print('=>{} 20. time.sleep(1)'.format(host))
         time.sleep(1)
@@ -116,16 +121,16 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Do you want to create a bulk file [YES/NO]?:
         print('=>{} 23. Do you want to create a bulk file [YES/NO]?:'.format(host))
-        t23 = telnet.read_until(b'?')
+        t23 = telnet.read_until(b'?').decode()
         print(t23)
         print('=>{} 24. NO'.format(host))
-        telnet.write(b'NO\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 25. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Do you wish filter on transaction data [YES/NO]?:
         print('=>{} 26. Do you wish filter on transaction data [YES/NO]?:'.format(host))
-        t26 = telnet.read_until(b'?')
+        t26 = telnet.read_until(b'?').decode()
         print(t26)
         print('=>{} 27. YES'.format(host))
         telnet.write(b'YES\r\n')
@@ -134,7 +139,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Last channel IPG entry [0-1/NONE]:
         print('=>{} 29. Last channel IPG entry [0-1/NONE]:'.format(host))
-        t29 = telnet.read_until(b':')
+        t29 = telnet.read_until(b':').decode()
         print(t29)
         print('=>{} 30. NONE'.format(host))
         telnet.write(b'NONE\r\n')
@@ -143,7 +148,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- IPG enable [0-1/NONE]:
         print('=>{} 32. IPG enable [0-1/NONE]:'.format(host))
-        t32 = telnet.read_until(b':')
+        t32 = telnet.read_until(b':').decode()
         print(t32)
         print('=>{} 33. NONE'.format(host))
         telnet.write(b'NONE\r\n')
@@ -152,7 +157,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Adjust for daylight savings [0-1/NONE]:
         print('=>{} 35. Adjust for daylight savings [0-1/NONE]:'.format(host))
-        t35 = telnet.read_until(b':')
+        t35 = telnet.read_until(b':').decode()
         print(t35)
         print('=>{} 36. NONE'.format(host))
         telnet.write(b'NONE\r\n')
@@ -161,7 +166,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Release to EMM Provider ID [0x0-0xFFFF/NONE]:
         print('=>{} 38. Release to EMM Provider ID [0x0-0xFFFF/NONE]:'.format(host))
-        t38 = telnet.read_until(b':')
+        t38 = telnet.read_until(b':').decode()
         print(t38)
         print('=>{} 39. NONE'.format(host))
         telnet.write(b'NONE\r\n')
@@ -170,97 +175,109 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- MD Subtype [0-1/NONE]:
         print('=>{} 41. MD Subtype [0-1/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t41 = telnet.read_until(b':').decode()
+        print(t41)
         print('=>{} 42. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 43. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Single VCM ID [1-65535/NONE]:
         print('=>{} 44. Single VCM ID [1-65535/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t44 = telnet.read_until(b':').decode()
+        print(t44)
         print('=>{} 45. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 46. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Home VCM ID [1-65535/NONE]:
         print('=>{} 47. Home VCM ID [1-65535/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t47 = telnet.read_until(b':').decode()
+        print(t47)
         print('=>{} 48. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 49. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Home virtual channel [1-4095/NONE]:
         print('=>{} 50. Home virtual channel [1-4095/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t50 = telnet.read_until(b':').decode()
+        print(t50)
         print('=>{} 51. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 52. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Time zone [(-780)-(780)/NONE]:
         print('=>{} 53. Time zone [(-780)-(780)/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t53 = telnet.read_until(b':').decode()
+        print(t53)
         print('=>{} 54. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 55. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Ratings region [0-255/NONE]:
         print('=>{} 56. Ratings region [0-255/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t56 = telnet.read_until(b':').decode()
+        print(t56)
         print('=>{} 57. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 58. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Enable blackouts [0-1/NONE]:
         print('=>{} 59. Enable blackouts [0-1/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t59 = telnet.read_until(b':').decode()
+        print(t59)
         print('=>{} 60. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 61. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Region code [0-255/NONE]:
         print('=>{} 62. Region code [0-255/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t62 = telnet.read_until(b':').decode()
+        print(t62)
         print('=>{} 63. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 64. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Postal code [NONE]:
         print('=>{} 65. Postal code [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t65 = telnet.read_until(b':').decode()
+        print(t65)
         print('=>{} 66. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 67. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Tier (one at a time) [0-2047/NONE]:
         print('=>{} 68. Tier (one at a time) [0-2047/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t68 = telnet.read_until(b':').decode()
+        print(t68)
         print('=>{} 69. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 70. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Unit Group [0-255/NONE]:
         print('=>{} 71. Unit Group [0-255/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t71 = telnet.read_until(b':').decode()
+        print(t71)
         print('=>{} 72. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 73. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- IPG Svc Num Index [0-1/NONE]:
         print('=>{} 74. IPG Svc Num Index [0-1/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t74 = telnet.read_until(b':').decode()
+        print(t74)
         print('=>{} 75. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 76. time.sleep(2)'.format(host))
         time.sleep(2)
 
@@ -268,41 +285,47 @@ def telnet_ucs_audit(host, ird_names_list):
         #         '*' is a multi-character wildcard.
         # Name [NONE]:
         print('=>{} 77. Name [NONE]:'.format(host))
-        t77 = telnet.read_until(b':')
+        t77 = telnet.read_very_eager().decode()
         print(t77)
         print('=>{} 78. '.format(host) + name_of_ird)
-        telnet.write(name_of_ird.encode() + b'\r\n')
+        string_ird_name = name_of_ird[0:-3] + '*\r\n'
+        print(string_ird_name)
+        print(string_ird_name.encode())
+        telnet.write(string_ird_name.encode())
         print('=>{} 79. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Miscellaneous field 0 [NONE]:
         print('=>{} 80. Miscellaneous field 0 [NONE]:'.format(host))
-        t80 = telnet.read_very_eager()
+        t80 = telnet.read_until(b':').decode()
         print(t80)
         print('=>{} 81. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 82. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Miscellaneous field 1 [NONE]:
         print('=>{} 83. Miscellaneous field 1 [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t83 = telnet.read_until(b':').decode()
+        print(t83)
         print('=>{} 84. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 85. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Miscellaneous field 2 [NONE]:
         print('=>{} 86. Miscellaneous field 2 [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t86 = telnet.read_until(b':').decode()
+        print(t86)
         print('=>{} 87. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 88. time.sleep(1)'.format(host))
         time.sleep(1)
 
         # -- Miscellaneous field 3 [NONE]:
         print('=>{} 89. Miscellaneous field 3 [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t89 = telnet.read_until(b':').decode()
+        print(t89)
         print('=>{} 90. NONE'.format(host))
         telnet.write(b'NONE\r\n')
         print('=>{} 91. time.sleep(1)'.format(host))
@@ -310,7 +333,8 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Miscellaneous field 4 [NONE]:
         print('=>{} 92. Miscellaneous field 4 [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t92 = telnet.read_until(b':').decode()
+        print(t92)
         print('=>{} 93. NONE'.format(host))
         telnet.write(b'NONE\r\n')
         print('=>{} 94. time.sleep(1)'.format(host))
@@ -318,7 +342,8 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Miscellaneous field 5 [NONE]:
         print('=>{} 95. Miscellaneous field 5 [NONE]:'.format(host))
-        telnet.read_until(b':')
+        t95 = telnet.read_until(b':').decode()
+        print(t95)
         print('=>{} 96. NONE'.format(host))
         telnet.write(b'NONE\r\n')
         print('=>{} 97. time.sleep(1)'.format(host))
@@ -326,7 +351,7 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Multiport Update Enabled [0-1/NONE]:
         print('=>{} 98. Multiport Update Enabled [0-1/NONE]:'.format(host))
-        t98 = telnet.read_until(b':')
+        t98 = telnet.read_until(b':').decode()
         print(t98)
         print('=>{} 99. NONE'.format(host))
         telnet.write(b'NONE\r\n')
@@ -335,7 +360,8 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Virtual Network [0-500/NONE]:
         print('=>{} 101. Virtual Network [0-500/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t101 = telnet.read_until(b':').decode()
+        print(t101)
         print('=>{} 102. NONE'.format(host))
         telnet.write(b'NONE\r\n')
         print('=>{} 103. time.sleep(1)'.format(host))
@@ -343,7 +369,8 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- HWC Profile Enabled [0-1/NONE]:
         print('=>{} 104. HWC Profile Enabled [0-1/NONE]:'.format(host))
-        telnet.read_until(b':')
+        t104 = telnet.read_until(b':').decode()
+        print(t104)
         print('=>{} 105. NONE'.format(host))
         telnet.write(b'NONE\r\n')
         print('=>{} 106. time.sleep(1)'.format(host))
@@ -351,30 +378,41 @@ def telnet_ucs_audit(host, ird_names_list):
 
         # -- Select unit types (separate by comma, if more than one)
         #                 [1=DC1, 2=DC2, 3=IRT]:
-        print('=>{} 107. [1=DC1, 2=DC2, 3=IRT]:'.format(host))
-        t107 = telnet.read_until(b':')
+        print('=>{} 107. Select unit types (separate by comma, if more than one)\n[1=DC1, 2=DC2, 3=IRT]:'.format(host))
+        t107 = telnet.read_until(b':').decode()
         print(t107)
         print('=>{} 108. 2'.format(host))
         telnet.write(b'2\r\n')
-        print('=>{} 109. time.sleep(40)'.format(host))
-        time.sleep(40)
+        print('=>{} 109. time.sleep(50)'.format(host))
+        time.sleep(50)
 
-        # -- Wish to audit another operator group [YES/NO]?:
-        print('=>{} 110. Wish to audit another operator group [YES/NO]?'.format(host))
-        t108 = telnet.read_very_eager()
+        # -- Wish to audit the authorization file for operator group 0 again [YES/NO]?
+        print('=>{} 110. Wish to audit the authorization file for operator group 0 again [YES/NO]?'.format(host))
+        t108 = telnet.read_until(b'?').decode()
         print(t108)
         print('=>{} 111. NO'.format(host))
-        telnet.write(b'NO\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 112. time.sleep(1)'.format(host))
         time.sleep(1)
 
-        print('=>{} 113. (UCSMANAGER)$'.format(host))
-        t113 = telnet.read_until(b'(UCSMANAGER)$')
+        '''
+        # -- Wish to audit another operator group [YES/NO]?:
+        print('=>{} 113. Wish to audit another operator group [YES/NO]?'.format(host))
+        t113 = telnet.read_until(b'?').decode()
         print(t113)
+        print('=>{} 114. NO'.format(host))
+        telnet.write(b'\r\n')
+        print('=>{} 115. time.sleep(1)'.format(host))
+        time.sleep(1)
+        '''
+
+        print('=>{} 116. (UCSMANAGER)$'.format(host))
+        t116 = telnet.read_until(b'(UCSMANAGER)$').decode()
+        print(t116)
 
     telnet.close()
 
-    return "ПРОВЕРЬТЕ ФАЙЛЫ В ДИРЕКТОРИИ UCS$SCRIPT: УДАЛЕННОГО ХОСТА " + host
+    return "\nПРОВЕРЬТЕ ФАЙЛЫ В ДИРЕКТОРИИ UCS$SCRIPT: УДАЛЕННОГО ХОСТА " + host
 
 
 # TELNET - - - - - - - - - - - - - - - - - - - -
@@ -529,8 +567,11 @@ if __name__ == "__main__":
             ird_name_list.append(ird_name.rstrip())
 
     pprint(ird_name_list)
-    
+
+    print('\n', '- -'*20, '\n')
+
     # -- для плученного списка приемников из внутрнней БД UCS получаем скрипты-описания приемника.
     # -- он будет храниться на удаленном хосте.
     # -- потом его нужно скачивать и править вручную, если нужны какие-либо изменения.
-    print(telnet_ucs_audit(KATEL2, ird_name_list))
+    # print(telnet_ucs_audit(KATEL2, ird_name_list))
+    print(telnet_ucs_audit(KATEL2, ['000-03454-60108-063']))

@@ -12,7 +12,7 @@ connection.commit()
 
 def sql_queries(db_table, somedata):
     """
-    function takes data and put it into database
+    функция берёт данные и записывает из в базу данных
     """
 
     query = "REPLACE into ucs (ua, tiers, name, misc1, misc2, misc3, misc4, misc5, misc6) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}');".format(

@@ -11,7 +11,7 @@ connection.commit()
 
 def sql_queries(db_table, somedata):
     """
-    function takes data and put it into database
+    функция берёт данные и записывает их в базу данных
     """
 
     query = "REPLACE into ktr (ua, name, odrt, region, city, program, obltv) values ('{}','{}','{}','{}','{}','{}','{}');".format(

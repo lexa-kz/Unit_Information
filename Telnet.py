@@ -5,7 +5,7 @@
 
 import pexpect
 
-with pexpect.spawn('telnet 172.31.176.4') as telnet:
+with pexpect.run('telnet 172.31.176.4') as telnet:
 
     telnet.expect('Username:')
     telnet.sendline('ucsmanager')

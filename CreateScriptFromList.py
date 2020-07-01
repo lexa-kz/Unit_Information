@@ -288,10 +288,10 @@ def telnet_ucs_audit(host, ird_names_list):
         t77 = telnet.read_very_eager().decode()
         print(t77)
         print('=>{} 78. '.format(host) + name_of_ird)
-        string_ird_name = name_of_ird[0:-3] + '*\r\n'
-        print(string_ird_name)
-        print(string_ird_name.encode())
-        telnet.write(string_ird_name.encode())
+        # string_ird_name = '000-?????-' + name_of_ird[11-15] + '???\r\n'
+        # print(string_ird_name)
+        # print(string_ird_name.encode())
+        telnet.write(b'000-03454-60108-063\r\n')
         print('=>{} 79. time.sleep(1)'.format(host))
         time.sleep(1)
 
@@ -574,4 +574,4 @@ if __name__ == "__main__":
     # -- он будет храниться на удаленном хосте.
     # -- потом его нужно скачивать и править вручную, если нужны какие-либо изменения.
     # print(telnet_ucs_audit(KATEL2, ird_name_list))
-    # print(telnet_ucs_audit(KATEL2, ['000-03454-60108-063']))
+    print(telnet_ucs_audit(KATEL2, ['000-03454-60108-063']))

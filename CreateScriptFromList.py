@@ -142,7 +142,7 @@ def telnet_ucs_audit(host, ird_names_list):
         t29 = telnet.read_until(b':').decode()
         print(t29)
         print('=>{} 30. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 31. time.sleep(1)'.format(host))
         time.sleep(1)
 
@@ -151,7 +151,7 @@ def telnet_ucs_audit(host, ird_names_list):
         t32 = telnet.read_until(b':').decode()
         print(t32)
         print('=>{} 33. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 34. time.sleep(1)'.format(host))
         time.sleep(1)
 
@@ -160,7 +160,7 @@ def telnet_ucs_audit(host, ird_names_list):
         t35 = telnet.read_until(b':').decode()
         print(t35)
         print('=>{} 36. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 37. time.sleep(1)'.format(host))
         time.sleep(1)
 
@@ -169,7 +169,7 @@ def telnet_ucs_audit(host, ird_names_list):
         t38 = telnet.read_until(b':').decode()
         print(t38)
         print('=>{} 39. NONE'.format(host))
-        telnet.write(b'NONE\r\n')
+        telnet.write(b'\r\n')
         print('=>{} 40. time.sleep(1)'.format(host))
         time.sleep(1)
 
@@ -288,10 +288,7 @@ def telnet_ucs_audit(host, ird_names_list):
         t77 = telnet.read_very_eager().decode()
         print(t77)
         print('=>{} 78. '.format(host) + name_of_ird)
-        # string_ird_name = '000-?????-' + name_of_ird[11-15] + '???\r\n'
-        # print(string_ird_name)
-        # print(string_ird_name.encode())
-        telnet.write(b'000-03454-60108-063\r\n')
+        telnet.write(name_of_ird + b'\r\n')
         print('=>{} 79. time.sleep(1)'.format(host))
         time.sleep(1)
 

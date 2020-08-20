@@ -4,7 +4,8 @@ from pprint import pprint
 
 def tier_translation(tiers_list_hex):
     """
-    переводит список строк в список tier-битов в дес.виде
+    переводит список строк ['AT [0] = 0x0', 'AT [1] = 0x0', ...]
+    в список tier-битов в дес.виде
     :param tiers_list_hex:
     :return: tiers_list_dec
     """

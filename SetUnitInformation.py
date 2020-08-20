@@ -341,7 +341,6 @@ def tiers_list_to_script(tiers_list):
 
     return at_string_list
 
-
 def create_script(ua_name, tiers_list, descriptors_dict):
     """
     по имени приемника, списку тиер-битов и словарю описательных элементов
@@ -362,7 +361,7 @@ def create_script(ua_name, tiers_list, descriptors_dict):
     new_script = ua_script_template.replace('0X0000000000', ua).replace('000-00000-00000-000', ua_name)
 
     #   из списка тиер-битов отдельные тиер-биты переводим в бинарный вид
-    #   и расставляем в соответствующие блоки "AT [..] = 0x.. "результирующего скрипта:
+    #   и расставляем в соответствующие блоки "AT [..] = 0x.. " результирующего скрипта:
     if tiers_list:
         at_string = tiers_list_to_script(tiers_list)
 
@@ -411,31 +410,32 @@ def get_info_from_db(ua, db_name):
 
     return ird_data
 
+if __name__ == "__main__":
 
-UA = input("ВВЕДИТЕ НОМЕР ПРИЁМНИКА (UA):\n")
-if not UA:
-    UA = '000-03086-26596-214'  # пока для теста
+    UA = input("ВВЕДИТЕ НОМЕР ПРИЁМНИКА (UA):\n")
+    if not UA:
+        UA = '000-03086-26596-214'  # пока для теста
 
-print('данные по приёмнику {} из базы данных UCS:'.format(UA))
-ucs_ua_info = get_info_from_db(UA[0:15], 'ucs')
+    print('данные по приёмнику {} из базы данных UCS:'.format(UA))
+    ucs_ua_info = get_info_from_db(UA[0:15], 'ucs')
 
-pprint(ucs_ua_info)
-print('- - '*20)
+    pprint(ucs_ua_info)
+    print('- - '*20)
 
-tiers = list(ucs_ua_info[1].split(' '))
-MISC1 = ucs_ua_info[3]
-MISC2 = ucs_ua_info[4]
-MISC3 = ucs_ua_info[5]
-MISC4 = ucs_ua_info[6]
-MISC5 = ucs_ua_info[7]
-MISC6 = ucs_ua_info[8]
-descriptors = {'MISC1': MISC1, 'MISC2': MISC2, 'MISC3': MISC3, 'MISC4': MISC4,
-               'MISC5': MISC5, 'MISC6': MISC6}
+    tiers = list(ucs_ua_info[1].split(' '))
+    MISC1 = ucs_ua_info[3]
+    MISC2 = ucs_ua_info[4]
+    MISC3 = ucs_ua_info[5]
+    MISC4 = ucs_ua_info[6]
+    MISC5 = ucs_ua_info[7]
+    MISC6 = ucs_ua_info[8]
+    descriptors = {'MISC1': MISC1, 'MISC2': MISC2, 'MISC3': MISC3, 'MISC4': MISC4,
+                   'MISC5': MISC5, 'MISC6': MISC6}
 
-print('данные по приёмнику {} из базы данных Казтелерадио:'.format(UA))
-ktr_ua_info = get_info_from_db(UA[0:15], 'ktr')
+    print('данные по приёмнику {} из базы данных Казтелерадио:'.format(UA))
+    ktr_ua_info = get_info_from_db(UA[0:15], 'ktr')
 
-pprint(ktr_ua_info)
-print('- - '*20)
+    pprint(ktr_ua_info)
+    print('- - '*20)
 
-print(create_script(UA, tiers, descriptors))
+    print(create_script(UA, tiers, descriptors))

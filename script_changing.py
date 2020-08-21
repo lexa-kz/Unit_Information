@@ -53,8 +53,7 @@ def script_file_changing(file, q):
                     o.close()
 
             else:
-                print('в блоке АТ [{}] исходного скрипта нет тиер-битов ( AT [{}] = 0х0), \nпродолжаем работу...'.format(AT_num))
-                print(trbt)
+                print('в блоке АТ [{}] исходного скрипта нет тиер-битов ( AT [{}] = 0х0), \nпродолжаем работу...'.format(AT_num, AT_num))
 
                 # запишем изменения обратно в файл
                 o = open(file, 'w')
@@ -70,12 +69,12 @@ def script_file_changing(file, q):
         else:
             print('так как ничего не введено, то не будет внесено, никаких изменений')
 
-    return 'в файл {} внесены изменения'.format(file)
+    return 'в файл {} внесены изменения и он готов к загрузке на сервер'.format(file)
 
     print('\n>>> проверьте файл ', file, ' и продожите работу')
 
 if __name__=="__main__":
 
-    file = 'c:/IRDs/result_file.SCR;1'
+    file = 'files/temp/result_file.SCR;1'
 
     print(script_file_changing(file, '+9'))

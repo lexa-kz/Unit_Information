@@ -39,6 +39,7 @@ def sql_query(db, query):
 
     return ird_data
 
+
 def telnet_ucs_audit(host, ird_names_list):
     """
     TELNET operation ucs_audit
@@ -52,8 +53,6 @@ def telnet_ucs_audit(host, ird_names_list):
         print('\n не задан хост, исправьте\n')
 
     print('логинимся по telnet на', host, ' - ', hostname, '\n')
-
-
 
     telnet = telnetlib.Telnet(host)
     telnet.read_until(b'Username:')
@@ -91,9 +90,9 @@ def telnet_ucs_audit(host, ird_names_list):
         # --  Enter the script file specification (UCS$SCRIPT:UCSAUDITALL.SCR):
         time.sleep(1)
 
-        name_for_filename = sql_query('ucs', 'select * from ucs where name="{}";'.format(name_of_ird))
+        name_for_filename = sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird))[0]
 
-        string_script_filename = 'ucs$script:' + name_of_ird + '.scr\r\n'
+        string_script_filename = 'ucs$script:' + name_for_filename + '.scr\r\n'
         telnet.write(string_script_filename.encode())
         time.sleep(1)
 
@@ -437,7 +436,8 @@ if __name__ == "__main__":
 
     pprint(ird_name_list)
 
-    # -- проверка имён в списке на соответствие именам во внутрнней БД UCS.
+    # -- проверка имён в списке на соответствие именам во внутрнней БД UCS,
+    # заполненой из актуального файла UA_DB.SCR;1.
     actual_ird_name_list = list()
     for point in ird_name_list:
         if point:
@@ -471,7 +471,7 @@ if __name__ == "__main__":
     # из этих файлов создается единый файл, в который будут внесены изменения.
     with open('files/temp/result_file.SCR;1', 'w') as file:
         for files in list_for_change:
-            with open('c:/IRDs/' + files, 'r') as src_files:
+            with open('files/temp/' + files, 'r') as src_files:
                 for lines in src_files:
                     file.write(lines)
 

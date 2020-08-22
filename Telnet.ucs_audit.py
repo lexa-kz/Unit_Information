@@ -235,7 +235,7 @@ def telnet_ucs_audit(host, ird_names_list):
     return "\n.SCR-файлы подготовлены для редактирования \nв директории UCS$SCRIPT: хоста " + host + '\n'
 
 
-def telnet_ucs_bulktxt_ucs_offbulk(host, list_of_ird):
+def telnet_ucs_bulktxt_ucs_offbulk(host, filename):
     """
     Telnet operation ucs_bulktxt and ucs_offbulk
     """
@@ -243,122 +243,121 @@ def telnet_ucs_bulktxt_ucs_offbulk(host, list_of_ird):
     # print ('\nhost: \n', host)
     if host == '172.31.176.4':
         print('\n на KATEL2')
-    if host == '172.31.177.4':
+    elif host == '172.31.177.4':
         print('\n на KATEL3')
     else:
         print('\n не задан хост, исправьте\n')
 
-    for name_of_ird in list_of_ird:
+    name_of_ird = filename[:-6]
+    rmt_blk_file = 'ucs$bulk:' + name_of_ird + '.blk'
+    rmt_scr_file = 'ucs$script:' + name_of_ird + '.scr'
+    rmt_log_file = 'ucs$bulk:' + name_of_ird + '.log'
 
-        rmt_blk_file = 'ucs$bulk:' + name_of_ird + '.blk'
-        rmt_scr_file = 'ucs$script:' + name_of_ird + '.scr'
-        rmt_log_file = 'ucs$bulk:' + name_of_ird + '.log'
+    print('=>{} 1. telnet({})'.format(host, host))
+    telnet = telnetlib.Telnet(host)
 
-        print('=>{} 1. telnet({})'.format(host, host))
-        telnet = telnetlib.Telnet(host)
+    print('=>{} 2. Username:'.format(host))
+    telnet.read_until(b'Username:')
 
-        print('=>{} 2. Username:'.format(host))
-        telnet.read_until(b'Username:')
+    print('=>{} 3. ucsmanager'.format(host))
+    telnet.write(b'ucsmanager\r\n')
 
-        print('=>{} 3. ucsmanager'.format(host))
-        telnet.write(b'ucsmanager\r\n')
+    print('=>{} 4. Password:'.format(host))
+    telnet.read_until(b'Password:')
 
-        print('=>{} 4. Password:'.format(host))
-        telnet.read_until(b'Password:')
+    print('=>{} 5. gotalife'.format(host))
+    telnet.write(b'gotalife\r\n')
 
-        print('=>{} 5. gotalife'.format(host))
-        telnet.write(b'gotalife\r\n')
+    print('=>{} 6. time.sleep(3)'.format(host))
+    time.sleep(3)
 
-        print('=>{} 6. time.sleep(3)'.format(host))
-        time.sleep(3)
+    print('=>{} 7. (UCSMANAGER)$'.format(host))
+    telnet.read_until(b'(UCSMANAGER)$')
 
-        print('=>{} 7. (UCSMANAGER)$'.format(host))
-        telnet.read_until(b'(UCSMANAGER)$')
+    # -- ucs_bulktxt
+    # print('=>{} 22. $'.format(host))
+    # telnet.read_until(b'$')
+    print('=>{} 8. ucs_bulktxt'.format(host))
+    telnet.write(b'ucs_bulktxt\r\n')
+    print('=>{} 9. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- ucs_bulktxt
-        # print('=>{} 22. $'.format(host))
-        # telnet.read_until(b'$')
-        print('=>{} 8. ucs_bulktxt'.format(host))
-        telnet.write(b'ucs_bulktxt\r\n')
-        print('=>{} 9. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- Log message contents (y or n)? y
+    print('=>{} 10. Log message contents (y or n)?'.format(host))
+    t10 = telnet.read_until(b'?')
+    print(t10.decode())
+    print('=>{} 11. y'.format(host))
+    telnet.write(b'y\r\n')
+    print('=>{} 12. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- Log message contents (y or n)? y
-        print('=>{} 10. Log message contents (y or n)?'.format(host))
-        t10 = telnet.read_until(b'?')
-        print(t10.decode())
-        print('=>{} 11. y'.format(host))
-        telnet.write(b'y\r\n')
-        print('=>{} 12. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- Enter bulk file specification:
+    print('=>{} 13. Enter bulk file specification:'.format(host))
+    t13 = telnet.read_until(b'specification:')
+    print(t13.decode())
+    print('=>{} 14. {}'.format(host, rmt_blk_file))
+    telnet.write((rmt_blk_file + '\r\n').encode())
+    print('=>{} 15. time.sleep(3)'.format(host))
+    time.sleep(3)
 
-        # -- Enter bulk file specification:
-        print('=>{} 13. Enter bulk file specification:'.format(host))
-        t13 = telnet.read_until(b'specification:')
-        print(t13.decode())
-        print('=>{} 14. {}'.format(host, rmt_blk_file))
-        telnet.write((rmt_blk_file + '\r\n').encode())
-        print('=>{} 15. time.sleep(3)'.format(host))
-        time.sleep(3)
+    # -- Enter text file specification:
+    print('=>{} 16. Enter text file specification:'.format(host))
+    # telnet.read_until(b'specification:')
+    print('=>{} 17. {}'.format(host, rmt_scr_file))
+    telnet.write((rmt_scr_file + '\r\n').encode())
+    print('=>{} 18. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- Enter text file specification:
-        print('=>{} 16. Enter text file specification:'.format(host))
-        # telnet.read_until(b'specification:')
-        print('=>{} 17. {}'.format(host, rmt_scr_file))
-        telnet.write((rmt_scr_file + '\r\n').encode())
-        print('=>{} 18. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- Another file (y or n)? n
+    print('=>{} 19. Another file (y or n)?'.format(host))
+    t19 = telnet.read_until(b'?')
+    print(t19.decode())
+    print('=>{} 20. n'.format(host))
+    telnet.write(b'n\r\n')
+    print('=>{} 21. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- Another file (y or n)? n
-        print('=>{} 19. Another file (y or n)?'.format(host))
-        t19 = telnet.read_until(b'?')
-        print(t19.decode())
-        print('=>{} 20. n'.format(host))
-        telnet.write(b'n\r\n')
-        print('=>{} 21. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- ucs_offbulk
+    print('=>{} 22. $'.format(host))
+    t22 = telnet.read_until(b'$')
+    print(t22.decode())
+    print('=>{} 23. ucs_offbulk'.format(host))
+    telnet.write(b'ucs_offbulk\r\n')
+    print('=>{} 24. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- ucs_offbulk
-        print('=>{} 22. $'.format(host))
-        t22 = telnet.read_until(b'$')
-        print(t22.decode())
-        print('=>{} 23. ucs_offbulk'.format(host))
-        telnet.write(b'ucs_offbulk\r\n')
-        print('=>{} 24. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- bulk-файл для обрабокти
+    print('=>{} 25. File name (64 char max) :'.format(host))
+    t25 = telnet.read_until(b':')
+    print(t25.decode())
+    print('=>{} 26. {}'.format(host, rmt_blk_file))
+    telnet.write((rmt_blk_file + '\r\n').encode())
+    print('=>{} 27. time.sleep(1)'.format(host))
+    time.sleep(1)
 
-        # -- bulk-файл для обрабокти
-        print('=>{} 25. File name (64 char max) :'.format(host))
-        t25 = telnet.read_until(b':')
-        print(t25.decode())
-        print('=>{} 26. {}'.format(host, rmt_blk_file))
-        telnet.write((rmt_blk_file + '\r\n').encode())
-        print('=>{} 27. time.sleep(1)'.format(host))
-        time.sleep(1)
+    # -- Y - для подтверждения
+    print('=>{} 28. Y'.format(host))
+    telnet.write(b'Y\r\n')
+    print('=>{} 29. (UCSMANAGER)$'.format(host))
+    telnet.read_until(b'(UCSMANAGER)$')
+    print('=>{} 30. time.sleep(3)'.format(host))
+    time.sleep(3)
 
-        # -- Y - для подтверждения
-        print('=>{} 28. Y'.format(host))
-        telnet.write(b'Y\r\n')
-        print('=>{} 29. (UCSMANAGER)$'.format(host))
-        telnet.read_until(b'(UCSMANAGER)$')
-        print('=>{} 30. time.sleep(3)'.format(host))
-        time.sleep(3)
+    # -- проверка лог-файла на ошибки (если 0 - нет ошибок)
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    print('=>{} 31. {}'.format(host, rmt_log_file))
+    telnet.write(('dir ' + rmt_log_file + '/size\r\n').encode())
+    print('=>{} 32. time.sleep(3)'.format(host))
+    time.sleep(3)
 
-        # -- проверка лог-файла на ошибки (если 0 - нет ошибок)
-        # - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        print('=>{} 31. {}'.format(host, rmt_log_file))
-        telnet.write(('dir ' + rmt_log_file + '/size\r\n').encode())
-        print('=>{} 32. time.sleep(3)'.format(host))
-        time.sleep(3)
-
-        print('=>{} 33. ...проверка... \n'.format(host))
-        check_log = telnet.read_until(b'(UCSMANAGER)$')
-        print(check_log.decode(), '\n')
-        print(check_log.split()[-4] + b' ' + check_log.split()[-3], '\n', '`' * 20)
-        if check_log.split()[-4] == b'0':
-            print('\n', ' (', host, ')\n', 'БЕЗ ОШИБОК!!! \n ВСЁ ОТЛИЧНО!!! \n ЗАПИШИТЕ ВСЁ В ЖУРНАЛ!!!\n')
-        else:
-            print('ЕСТЬ ОШИБКИ!!! \n НУЖНА ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА!!!\n')
+    print('=>{} 33. ...проверка... \n'.format(host))
+    check_log = telnet.read_until(b'(UCSMANAGER)$')
+    print(check_log.decode(), '\n')
+    print(check_log.split()[-4] + b' ' + check_log.split()[-3], '\n', '`' * 20)
+    if check_log.split()[-4] == b'0':
+        print('\n', ' (', host, ')\n', 'БЕЗ ОШИБОК!!! \n ВСЁ ОТЛИЧНО!!! \n ЗАПИШИТЕ ВСЁ В ЖУРНАЛ!!!\n')
+    else:
+        print('ЕСТЬ ОШИБКИ!!! \n НУЖНА ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА!!!\n')
 
     telnet.close()
 
@@ -399,13 +398,18 @@ def ftp_download(host):
 def ftp_upload(host, file_list):
     print('соединение по FTP с сервером ', host)
     ftp = ftplib.FTP(host, 'ucsmanager', 'gotalife')
-    ftp.cwd('ucs$script')
+    time.sleep(5)
+    path = 'sys$sysdevice:[dc2.ucs.script]'
+    ftp.cwd(path)
 
     for files_for_upload in file_list:
-        print('по ФТП грузим файл {} на хост {}'.format(files_for_upload, host))
-        with open(files_for_upload) as file:
-            ftp.storbinary('STOR ' + files_for_upload)
+        print('по FTP грузим файл {} на хост {}'.format(files_for_upload, host))
+        with open(files_for_upload, 'r') as file:
+            ftp.storlines('STOR ' + files_for_upload, file)
+    time.sleep(15)
     ftp.close()
+    print('...done')
+
 
 def sql_name_compare(name):
     """
@@ -426,6 +430,9 @@ def sql_name_compare(name):
 
 
 if __name__ == "__main__":
+
+    # перед началом работы очищаем предыдущие временные файлы
+
 
     # -- из текстового файла со списком номеров приемников формируем рабочий список ird_name_list
     ird_name_list = list()
@@ -479,11 +486,8 @@ if __name__ == "__main__":
     print('вносим изменения:')
     print(script_file_changing('files/temp/result_file.SCR;1', '+9'))
 
-"""
-    cont = input('какие изменения в файлах нужно выполнить? [ENTER, если изменения уже внесены]')
-    if not cont:
-        # -- отредактированные скрипты нужно сконвертировать в исполняемые файлы и выполнить их удалённо:
-        print(telnet_ucs_bulktxt_ucs_offbulk(KATEL2, ird_name_list))
-    else:
-        print('что? что?')
-"""
+    # -- отредактированный скрипт нужно сконвертировать в исполняемый файл и выполнить его удалённо:
+    print('отредактированный скрипт нужно конвертируем в исполняемый файл и выполняем его удалённо\n'
+          'с помощью утилит ucs_bulktxt и ucs_offbulk, предварительно загрузив на сервер по FTp.')
+    print(ftp_upload(KATEL2, ['files/temp/result_file.SCR;1']))
+    print(telnet_ucs_bulktxt_ucs_offbulk(KATEL2, 'result_file.SCR;1'))

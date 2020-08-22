@@ -20,7 +20,7 @@ def script_file_changing(file, q):
     if q:
         if q.startswith('+'):
             t_add = q[1:]
-            print(t_add, ' - добавляем тиер-бит')
+            print(' - добавляем тиер-бит', t_add)
             #   input('какой тиер-бит добавить? : ')
 
             # вычисляем какой в блок и какое число записывать (SetUnitInformation)
@@ -71,7 +71,6 @@ def script_file_changing(file, q):
 
     return 'в файл {} внесены изменения и он готов к загрузке на сервер'.format(file)
 
-    print('\n>>> проверьте файл ', file, ' и продожите работу')
 
 if __name__=="__main__":
 

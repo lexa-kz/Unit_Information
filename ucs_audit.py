@@ -11,8 +11,8 @@ import ftplib
 import telnetlib
 import time
 import os
+from glob import glob
 from pprint import pprint
-# from concurrent.futures import ThreadPoolExecutor
 from progress.bar import IncrementalBar
 from script_changing import script_file_changing
 from SetUnitInformation import get_info_from_db
@@ -67,8 +67,8 @@ def telnet_ucs_audit(host, ird_names_list):
 
         print('для приемника ', name_of_ird, 'выполняется утилита ucs_audit:')
 
-        mylist = [1, 2, 3, 4, 5, 6, 7, 8]
-        bar = IncrementalBar('Countdown', max=len(mylist))
+        mylist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        bar = IncrementalBar(' ucs_audit_utility ', max=len(mylist))
         bar.next()
 
         # -- ucs_audit
@@ -78,6 +78,8 @@ def telnet_ucs_audit(host, ird_names_list):
         # -- Please enter operator group to audit [0-15/ALL]:
         telnet.write(b'0\r\n')
         time.sleep(1)
+
+        bar.next()
 
         # -- Do you want to create a report file [YES/NO]?:
         telnet.write(b'\r\n')
@@ -90,7 +92,10 @@ def telnet_ucs_audit(host, ird_names_list):
         # --  Enter the script file specification (UCS$SCRIPT:UCSAUDITALL.SCR):
         time.sleep(1)
 
-        name_for_filename = sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird))[0]
+        if sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird)):
+            name_for_filename = sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird))[0]
+        else:
+            name_for_filename = name_of_ird
 
         string_script_filename = 'ucs$script:' + name_for_filename + '.scr\r\n'
         telnet.write(string_script_filename.encode())
@@ -109,6 +114,8 @@ def telnet_ucs_audit(host, ird_names_list):
         # -- Last channel IPG entry [0-1/NONE]:
         telnet.write(b'\r\n')
         time.sleep(1)
+
+        bar.next()
 
         # -- IPG enable [0-1/NONE]:
         telnet.write(b'\r\n')
@@ -143,6 +150,8 @@ def telnet_ucs_audit(host, ird_names_list):
         # -- Time zone [(-780)-(780)/NONE]:
         telnet.write(b'\r\n')
         time.sleep(1)
+
+        bar.next()
 
         # -- Ratings region [0-255/NONE]:
         telnet.write(b'\r\n')
@@ -192,6 +201,8 @@ def telnet_ucs_audit(host, ird_names_list):
         telnet.write(b'\r\n')
         time.sleep(1)
 
+        bar.next()
+
         # -- Miscellaneous field 3 [NONE]:
         telnet.write(b'\r\n')
         time.sleep(1)
@@ -203,8 +214,6 @@ def telnet_ucs_audit(host, ird_names_list):
         # -- Miscellaneous field 5 [NONE]:
         telnet.write(b'\r\n')
         time.sleep(1)
-
-        bar.next()
 
         # -- Multiport Update Enabled [0-1/NONE]:
         telnet.write(b'\r\n')
@@ -218,6 +227,8 @@ def telnet_ucs_audit(host, ird_names_list):
         telnet.write(b'\r\n')
         time.sleep(2)
 
+        bar.next()
+
         # -- Select unit types (separate by comma, if more than one)
         #                 [1=DC1, 2=DC2, 3=IRT]:
         telnet.write(b'2\r\n')
@@ -227,6 +238,8 @@ def telnet_ucs_audit(host, ird_names_list):
         telnet.write(b'\r\n')
         time.sleep(2)
         telnet.read_until(b'$').decode()
+
+        bar.next()
 
         bar.finish()
 
@@ -355,7 +368,7 @@ def telnet_ucs_bulktxt_ucs_offbulk(host, filename):
     print(check_log.decode(), '\n')
     print(check_log.split()[-4] + b' ' + check_log.split()[-3], '\n', '`' * 20)
     if check_log.split()[-4] == b'0':
-        print('\n', ' (', host, ')\n', 'БЕЗ ОШИБОК!!! \n ВСЁ ОТЛИЧНО!!! \n ЗАПИШИТЕ ВСЁ В ЖУРНАЛ!!!\n')
+        print('\n', ' (', host, ')\n', 'ТРАНЗАКЦИЯ ПРОШЛА БЕЗ ОШИБОК!!! \n')
     else:
         print('ЕСТЬ ОШИБКИ!!! \n НУЖНА ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА!!!\n')
 
@@ -380,6 +393,7 @@ def ftp_download(host):
             list_of_files.append(lines.split()[0])
 
     for filename in list_of_files:
+        print('скачиваем файл {}'.format(filename))
         local_filename = os.path.join(r'files/temp/', filename)
         local_file = open(local_filename, 'wb')
         ftp.retrbinary('RETR ' + filename, local_file.write)
@@ -402,10 +416,10 @@ def ftp_upload(host, file_list):
     path = 'sys$sysdevice:[dc2.ucs.script]'
     ftp.cwd(path)
 
-    for files_for_upload in file_list:
-        print('по FTP грузим файл {} на хост {}'.format(files_for_upload, host))
-        with open(files_for_upload, 'r') as file:
-            ftp.storlines('STOR ' + files_for_upload, file)
+    for file_for_upload in file_list:
+        print('по FTP грузим файл {} на хост {}'.format(file_for_upload, host))
+        with open(file_for_upload, 'rb') as file:
+            ftp.storbinary('STOR ' + file_for_upload.split('/')[-1], file)
     time.sleep(15)
     ftp.close()
     print('...done')
@@ -426,14 +440,21 @@ def sql_name_compare(name):
     # ('000-03454-60108', '000-03454-60108-063', '312', 'KezTeleRadio', 'KYZYLORDA', 'Kamystybas', 'Kazakhstan',
     # 'KazTeleRadio                   KYZYLORDA', '')
 
-    return real_name[1]
+    return real_name[1] if real_name else name
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 if __name__ == "__main__":
 
     # перед началом работы очищаем предыдущие временные файлы
+    # print('перед началом работы очищаем предыдущие временные файлы')
+    files_for_del = glob('files/temp/*.SCR;1')
+    for file in files_for_del:
+        # delete local files
+        print('...deleting old .scr files in parent dir {}'.format(file))
+        os.remove(file)
 
-
+    print('...поехали...\n')
     # -- из текстового файла со списком номеров приемников формируем рабочий список ird_name_list
     ird_name_list = list()
     with open('files/list_for_change.txt') as listfile:
@@ -441,7 +462,9 @@ if __name__ == "__main__":
             if ird_name.startswith('000-'):
                 ird_name_list.append(ird_name.rstrip())
 
+    print('будем работать с приемниками:')
     pprint(ird_name_list)
+    print('\n{} приёмников'.format(len(ird_name_list)))
 
     # -- проверка имён в списке на соответствие именам во внутрнней БД UCS,
     # заполненой из актуального файла UA_DB.SCR;1.
@@ -467,12 +490,12 @@ if __name__ == "__main__":
     '''
 
     for irds in actual_ird_name_list:
-        print(telnet_ucs_audit(KATEL2, [irds]))
+        print(telnet_ucs_audit(KATEL3, [irds]))
 
     # -- полученные файлы скриптов .scr по FTP скачиваются с удаённого сервера на локальный для редактирования.
     if os.path.exists('files/temp/result_file.SCR;1'):
         os.remove('files/temp/result_file.SCR;1')
-    list_for_change = ftp_download(KATEL2)
+    list_for_change = ftp_download(KATEL3)
     print(list_for_change)  # -- составляется список скачанных файлов.
 
     # из этих файлов создается единый файл, в который будут внесены изменения.
@@ -483,11 +506,16 @@ if __name__ == "__main__":
                     file.write(lines)
 
     print('создан объединенный файл files/temp/result_file.SCR;1 ')
+
+    # -- КАКИЕ ИЗМЕНЕНИЯ НУЖНО ВНЕСТИ --
     print('вносим изменения:')
     print(script_file_changing('files/temp/result_file.SCR;1', '+9'))
+    print(script_file_changing('files/temp/result_file.SCR;1', 'm1 U'))
 
     # -- отредактированный скрипт нужно сконвертировать в исполняемый файл и выполнить его удалённо:
     print('отредактированный скрипт нужно конвертируем в исполняемый файл и выполняем его удалённо\n'
           'с помощью утилит ucs_bulktxt и ucs_offbulk, предварительно загрузив на сервер по FTp.')
-    print(ftp_upload(KATEL2, ['files/temp/result_file.SCR;1']))
-    print(telnet_ucs_bulktxt_ucs_offbulk(KATEL2, 'result_file.SCR;1'))
+    print(ftp_upload(KATEL3, ['files/temp/result_file.SCR;1']))
+    print(telnet_ucs_bulktxt_ucs_offbulk(KATEL3, 'result_file.SCR;1'))
+    print('\nну вот и всё - программа отработала!!!')
+    time.sleep(20)

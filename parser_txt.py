@@ -23,13 +23,17 @@ def parse_txt(txt_file):
     wrong_ua = list()
     for items in text:  # каждую строчку...
         if '000-' in items:  # проверяем на наличие номера приемника
-            # print(' - - ' * 20)
-            # print(items.rstrip())
+            print(' - - ' * 20)
+            print(items.rstrip())
 
             # Например: ['С-Казахстанская', 'Айыртауский', 'Арыкбалык', '22', 'Казахстан', 'DigiCipher-II',
             # 'DSR205K', '000-03454-52574-025']
 
-            ua = re.search(r'(000-0.*)\w*.*', items).group(0)
+            if re.search(r'(000-0.*)\w*.*', items):
+                ua = re.search(r'(000-0.*)\w*.*', items).group(0)
+            else:
+                continue
+            
             unit_address = ua.split('\t')[0].rstrip()
 
             # проверка номера на правильность формата
@@ -45,8 +49,11 @@ def parse_txt(txt_file):
             region = items.split('\t')[2]
             city = items.split('\t')[3]
             program = items.split('\t')[5]
-            obl_br = (items.split('\t')[14])[1:38]
-
+            if len(items.split('\t')) >= 14:
+                obl_br = (items.split('\t')[14])[1:38]
+            else:
+                obl_br = ''
+                        
             # чтобы в поле OBL_BR было какое-то значение (потом для БД)
             obl_br_str = "ОБЛ_ТВ" if obl_br else "-"
 

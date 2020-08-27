@@ -1,5 +1,6 @@
 import re
 from SetUnitInformation import tiers_list_to_script
+from SetUnitInformation import get_info_from_db
 from parser_script import tier_translation
 
 
@@ -10,7 +11,8 @@ def script_file_changing(file, q):
             q - какие изменения внести в файл'
                   + добавить тиер-бит
                   - удалить тиер-бит
-                  3. изменить описательное поле)
+                  n изменить имя name
+                  m1 - m5 изменить дескриптор MISC1-MISC5
     :return: отчёт, что изменения внесены
     """
 
@@ -53,7 +55,8 @@ def script_file_changing(file, q):
                     o.close()
 
             else:
-                print('в блоке АТ [{}] исходного скрипта нет тиер-битов ( AT [{}] = 0х0), \nпродолжаем работу...'.format(AT_num, AT_num))
+                print('в блоке АТ [{}] исходного скрипта нет тиер-битов ( AT [{}] = 0х0), \n'
+                      'продолжаем работу...'.format(AT_num, AT_num))
 
                 # запишем изменения обратно в файл
                 o = open(file, 'w')
@@ -65,6 +68,14 @@ def script_file_changing(file, q):
 
             o = open(file, 'w')
             o.write(re.sub('AT \[0\] = 0x\d+', 'AT [0] = 0x0', data))
+            o.close()
+
+        elif q.startswith('m'):
+            print('описательное поле MISC{} меняем на {}'.format(q[1], q[3:]))
+            o = open(file, 'w')
+            o.write(re.sub('MISC{} = ".*";                    ! Misc field {}'.format(q[1], q[1]),
+                           'MISC{} = "{}'.format(q[1], q[3:]) + ' '*(80-len(q[3:])) + '";                    ! Misc field {}'.format(q[1]), data))
+            o.close()
 
         else:
             print('так как ничего не введено, то не будет внесено, никаких изменений')

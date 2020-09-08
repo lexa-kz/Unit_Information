@@ -11,6 +11,7 @@ import ftplib
 import telnetlib
 import time
 import os
+import check_file
 from glob import glob
 from pprint import pprint
 from progress.bar import IncrementalBar
@@ -20,6 +21,8 @@ from SetUnitInformation import get_info_from_db
 
 KATEL2 = '172.31.176.4'
 KATEL3 = '172.31.177.4'
+
+
 
 
 def sql_query(db, query):
@@ -455,6 +458,10 @@ if __name__ == "__main__":
         os.remove(file)
 
     print('...поехали...\n')
+
+    # -- проверка номеров приёмников в файле на соответствие в БД ua.db
+    print(check_file.check_file('files/list_for_change.txt'))
+
     # -- из текстового файла со списком номеров приемников формируем рабочий список ird_name_list
     ird_name_list = list()
     with open('files/list_for_change.txt') as listfile:
@@ -493,6 +500,8 @@ if __name__ == "__main__":
         print(telnet_ucs_audit(KATEL3, [irds]))
 
     # -- полученные файлы скриптов .scr по FTP скачиваются с удаённого сервера на локальный для редактирования.
+
+    # -- предварительно удаляем старый файл
     if os.path.exists('files/temp/result_file.SCR;1'):
         os.remove('files/temp/result_file.SCR;1')
     list_for_change = ftp_download(KATEL3)

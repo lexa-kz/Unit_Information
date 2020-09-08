@@ -6,7 +6,8 @@ from pprint import pprint
 connection = sqlite3.connect('ua.db')
 cursor = connection.cursor()
 
-cursor.execute("CREATE TABLE if not exists ucs (ua text not null primary key, tiers text, name text, misc1 text, misc2 text, misc3 text, misc4 text, misc5 text, misc6 text);")
+print('создается таблица, если её нет')
+cursor.execute("CREATE TABLE if not exists ucs (ua text not null primary key, name text, tiers text, misc1 text, misc2 text, misc3 text, misc4 text, misc5 text, misc6 text);")
 connection.commit()
 
 

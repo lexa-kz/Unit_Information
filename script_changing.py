@@ -12,7 +12,7 @@ def script_file_changing(file, q):
                   + добавить тиер-бит
                   - удалить тиер-бит
                   n изменить имя name
-                  m1 - m5 изменить дескриптор MISC1-MISC5
+                  m1 - m6 изменить дескриптор MISC1-MISC6
     :return: отчёт, что изменения внесены
     """
 
@@ -71,7 +71,7 @@ def script_file_changing(file, q):
             o.close()
 
         elif q.startswith('m'):
-            print('описательное поле MISC{} меняем на {}'.format(q[1], q[3:]))
+            print('описательное поле MISC{} меняем на "{}"'.format(q[1], q[3:]))
             o = open(file, 'w')
             o.write(re.sub('MISC{} = ".*";                    ! Misc field {}'.format(q[1], q[1]),
                            'MISC{} = "{}'.format(q[1], q[3:]) + ' '*(80-len(q[3:])) + '";                    ! Misc field {}'.format(q[1]), data))

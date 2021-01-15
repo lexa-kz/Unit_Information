@@ -4,8 +4,10 @@
 получившиеся .scr файлы скачивает в files/temp/ и объединяет их в один файл files/temp/result_file.SCR;1,
 в него записывает изменения (добавить/убрать тиер-бит, изменить описательное поле)
 
-... грузит итоговый скрипт на сервер и выполняет его
+Затем грузит итоговый скрипт на сервер и выполняет его.
+
 """
+
 import sqlite3
 import ftplib
 import telnetlib
@@ -27,14 +29,14 @@ KATEL3 = '172.31.177.4'
 
 def sql_query(db, query):
     """
-     из базы данных (ua.db) из одной из таблиц (ktr, ucs)
+     из базы данных (ua.db) из одной из таблиц (ktr, KATEL3)
      достаётся информация по конкретному запросу.
      """
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
 
-    query_str = query if query else "SELECT * FROM ucs;"
+    query_str = query if query else "SELECT * FROM KATEL3;"
     cursor.execute(query_str)
     ird_data = cursor.fetchone()
 
@@ -95,8 +97,8 @@ def telnet_ucs_audit(host, ird_names_list):
         # --  Enter the script file specification (UCS$SCRIPT:UCSAUDITALL.SCR):
         time.sleep(1)
 
-        if sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird)):
-            name_for_filename = sql_query('ua.db', 'select * from ucs where name="{}";'.format(name_of_ird))[0]
+        if sql_query('ua.db', 'select * from KATEL3 where name="{}";'.format(name_of_ird)):
+            name_for_filename = sql_query('ua.db', 'select * from KATEL3 where name="{}";'.format(name_of_ird))[0]
         else:
             name_for_filename = name_of_ird
 
@@ -437,7 +439,7 @@ def sql_name_compare(name):
 
 
     ua = name[:-4]
-    real_name = get_info_from_db(ua, 'ucs')
+    real_name = get_info_from_db(ua, 'KATEL3')
 
     # real_name:
     # ('000-03454-60108', '000-03454-60108-063', '312', 'KezTeleRadio', 'KYZYLORDA', 'Kamystybas', 'Kazakhstan',
@@ -518,12 +520,12 @@ if __name__ == "__main__":
 
     # -- КАКИЕ ИЗМЕНЕНИЯ НУЖНО ВНЕСТИ --
     print('вносим изменения:')
-    print(script_file_changing('files/temp/result_file.SCR;1', '+9'))
-    print(script_file_changing('files/temp/result_file.SCR;1', 'm1 U'))
+    #print(script_file_changing('files/temp/result_file.SCR;1', '+9'))
+    print(script_file_changing('files/temp/result_file.SCR;1', 'm4 Eurasia'))
 
     # -- отредактированный скрипт нужно сконвертировать в исполняемый файл и выполнить его удалённо:
     print('отредактированный скрипт нужно конвертируем в исполняемый файл и выполняем его удалённо\n'
-          'с помощью утилит ucs_bulktxt и ucs_offbulk, предварительно загрузив на сервер по FTp.')
+          'с помощью утилит ucs_bulktxt и ucs_offbulk, предварительно загрузив на сервер по FTP.')
     print(ftp_upload(KATEL3, ['files/temp/result_file.SCR;1']))
     print(telnet_ucs_bulktxt_ucs_offbulk(KATEL3, 'result_file.SCR;1'))
     print('\nну вот и всё - программа отработала!!!')

@@ -12,7 +12,7 @@ def check_file(filename):
         cursor = connection.cursor()
 
         for item in irds_list:
-            query = "select * from ucs where ua = '{}'".format(item[:15])
+            query = "select * from KATEL3 where ua = '{}'".format(item[:15])
             cursor.execute(query)
             connection.commit()
             text = cursor.fetchone()

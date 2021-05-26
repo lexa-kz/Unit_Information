@@ -5,7 +5,7 @@ import parser_txt
 connection = sqlite3.connect('ua.db')
 cursor = connection.cursor()
 
-cursor.execute("CREATE TABLE if not exists ktr (ua text not null primary key, name text, odrt text, region text, city text, program text, obltv text);")
+cursor.execute("CREATE TABLE if not exists ktr (ua text not null primary key, name text, odrt text, city text, program text, uch_tv text, obltv text);")
 connection.commit()
 
 
@@ -14,7 +14,7 @@ def sql_queries(db_table, somedata):
     функция берёт данные и записывает их в базу данных
     """
 
-    query = "REPLACE into ktr (ua, name, odrt, region, city, program, obltv) values ('{}','{}','{}','{}','{}','{}','{}');".format(
+    query = "REPLACE into ktr (ua, name, odrt, city, program, uch_tv, obltv) values ('{}','{}','{}','{}','{}','{}','{}');".format(
         somedata.split(',')[0], somedata.split(',')[1], somedata.split(',')[2], somedata.split(',')[3],
         somedata.split(',')[4], somedata.split(',')[5], somedata.split(',')[6])
     print(query)
@@ -30,6 +30,10 @@ data, wrong_data = parser_txt.parse_txt('files/PRM.txt')
 # pprint(data)
 if wrong_data:
     print('следующие данные нужно исправить: ', wrong_data)
+    with open('files/temp/wrong_UAs.txt', 'w') as wrong_ua_file:
+        for strings in wrong_data:
+            wrong_ua_file.write(str(strings))
+            wrong_ua_file.write('\n')
 
 # разбираем данные, добытые из скрипта,
 # для формирования стоки для записи в БД.

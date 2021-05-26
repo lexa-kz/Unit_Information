@@ -1,5 +1,5 @@
 """
-Программа берёт из текстового файла list_for_change.txt список номеров приёсников,
+Программа берёт из текстового файла list_for_change.txt список номеров приёмников,
 для них по Телнет выполняет утилиту ucs_audit,
 получившиеся .scr файлы скачивает в files/temp/ и объединяет их в один файл files/temp/result_file.SCR;1,
 в него записывает изменения (добавить/убрать тиер-бит, изменить описательное поле)
@@ -451,12 +451,15 @@ def sql_name_compare(name):
 
 if __name__ == "__main__":
 
+    # с каким сервером работаем
+    HOSTNAME = KATEL3
+
     # перед началом работы очищаем предыдущие временные файлы
     # print('перед началом работы очищаем предыдущие временные файлы')
-    files_for_del = glob('files/temp/*.SCR;1')
+    files_for_del = glob('files/temp/*.SCR;*')
     for file in files_for_del:
         # delete local files
-        print('...deleting old .scr files in parent dir {}'.format(file))
+        print('...deleting old .scr files in temp dir {}'.format(file))
         os.remove(file)
 
     print('...поехали...\n')
@@ -495,18 +498,18 @@ if __name__ == "__main__":
     Это гораздо дольше :-( но работает.
        Вобщем, задание на потом - разобраться почему через раз работает
     
-    print(telnet_ucs_audit(KATEL2, actual_ird_name_list))
+    print(telnet_ucs_audit(HOSTNAME, actual_ird_name_list))
     '''
 
     for irds in actual_ird_name_list:
-        print(telnet_ucs_audit(KATEL3, [irds]))
+        print(telnet_ucs_audit(HOSTNAME, [irds]))
 
     # -- полученные файлы скриптов .scr по FTP скачиваются с удаённого сервера на локальный для редактирования.
 
     # -- предварительно удаляем старый файл
     if os.path.exists('files/temp/result_file.SCR;1'):
         os.remove('files/temp/result_file.SCR;1')
-    list_for_change = ftp_download(KATEL3)
+    list_for_change = ftp_download(HOSTNAME)
     print(list_for_change)  # -- составляется список скачанных файлов.
 
     # из этих файлов создается единый файл, в который будут внесены изменения.
@@ -519,14 +522,18 @@ if __name__ == "__main__":
     print('создан объединенный файл files/temp/result_file.SCR;1 ')
 
     # -- КАКИЕ ИЗМЕНЕНИЯ НУЖНО ВНЕСТИ --
+    # -- если надо добавить tier-bit, то пишем: '+xxx'
+    # - если надо изменить описательное поле, задаём какое именно, и какой текст в нём будет: 'm6 UchTV'
     print('вносим изменения:')
-    #print(script_file_changing('files/temp/result_file.SCR;1', '+9'))
-    print(script_file_changing('files/temp/result_file.SCR;1', 'm4 Eurasia'))
+    print(script_file_changing('files/temp/result_file.SCR;1', '+613'))
+    print(script_file_changing('files/temp/result_file.SCR;1', 'm1 KazTeleRadio'))
+    print(script_file_changing('files/temp/result_file.SCR;1', 'm2 ZKO'))
+    print(script_file_changing('files/temp/result_file.SCR;1', 'm5 KazTeleRadio                   ZKO'))
 
     # -- отредактированный скрипт нужно сконвертировать в исполняемый файл и выполнить его удалённо:
-    print('отредактированный скрипт нужно конвертируем в исполняемый файл и выполняем его удалённо\n'
+    print('отредактированный скрипт конвертируем в исполняемый файл и выполняем его удалённо\n'
           'с помощью утилит ucs_bulktxt и ucs_offbulk, предварительно загрузив на сервер по FTP.')
-    print(ftp_upload(KATEL3, ['files/temp/result_file.SCR;1']))
-    print(telnet_ucs_bulktxt_ucs_offbulk(KATEL3, 'result_file.SCR;1'))
+    print(ftp_upload(HOSTNAME, ['files/temp/result_file.SCR;1']))
+    print(telnet_ucs_bulktxt_ucs_offbulk(HOSTNAME, 'result_file.SCR;1'))
     print('\nну вот и всё - программа отработала!!!')
     time.sleep(20)

@@ -1,3 +1,10 @@
+"""
+Скрипт запрашивает электронный номер приёмника,
+считывает по нему информацию из базы данных ua.db из таблиц KATEL3 и ktr,
+подготавливает скрипт-файл files/temp/UA_SCRIPT.SCR;1 для последующего
+редактирования и загрузки на сервер.
+"""
+
 import sqlite3
 from pprint import pprint
 
@@ -310,9 +317,8 @@ def tiers_list_to_script(tiers_list):
 
     tiers_dict_nums = dict()
     at_string_list = list()
-
-    for tier in tiers_list:
-
+    
+    for tier in tiers_list:        
         at_num = (int(tier) // 8)  # проверяем какие тиер-биты в какие блоки АТ [..] попадают:
 
         one_position = int(tier) - at_num * 8  # позиция '1' в блоке АТ [..], начиная с 0!!!
@@ -358,7 +364,7 @@ def create_script(ua_name, tiers_list, descriptors_dict):
 
     #   номер приемника (в шестнадцатиричном виде) и его строковое имя (для удобства поиска полный номер UA).
     #   исходные шаблонные значения заменяются в скрипте новыми реальными значениями:
-    new_script = ua_script_template.replace('0X0000000000', ua).replace('000-00000-00000-000', ua_name)
+    new_script = ua_script_template.replace('0x0000000000', ua).replace('000-00000-00000-000', ua_name)
 
     #   из списка тиер-битов отдельные тиер-биты переводим в бинарный вид
     #   и расставляем в соответствующие блоки "AT [..] = 0x.. " результирующего скрипта:
@@ -417,12 +423,12 @@ if __name__ == "__main__":
         UA = '000-03086-26596-214'  # пока для теста
 
     print('данные по приёмнику {} из базы данных UCS:'.format(UA))
-    ucs_ua_info = get_info_from_db(UA[0:15], 'ucs')
+    ucs_ua_info = get_info_from_db(UA[0:15], 'KATEL3')
 
     pprint(ucs_ua_info)
     print('- - '*20)
 
-    tiers = list(ucs_ua_info[1].split(' '))
+    tiers = list(ucs_ua_info[2].split(' '))
     MISC1 = ucs_ua_info[3]
     MISC2 = ucs_ua_info[4]
     MISC3 = ucs_ua_info[5]
@@ -438,4 +444,11 @@ if __name__ == "__main__":
     pprint(ktr_ua_info)
     print('- - '*20)
 
-    print(create_script(UA, tiers, descriptors))
+    UA_SCRIPT = create_script(UA, tiers, descriptors)
+    print(UA_SCRIPT)
+    with open('files/temp/UA_SCRIPT.SCR;1', 'w') as file:
+        for lines in UA_SCRIPT:
+            file.write(lines)
+    print('в директоии files/temp/ подготовлен файл UA_SCRIPT.SCR;1\n')
+
+    x = input('всё!\n\nнажмите любую клавишу')

@@ -30,7 +30,7 @@ def sql_queries(db_table, somedata):
     return 'data was inserted into DB:\n{}'.format(query)
 
 
-data = parser_script.parse_script('../KATEL2.SCR')
+data = parser_script.parse_script('../KATEL2.SCR;1')
 
 pprint(data, sort_dicts=False)
 
